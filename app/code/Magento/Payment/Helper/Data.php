@@ -267,10 +267,13 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
         $groupRelations = [];
 
         foreach ($this->getPaymentMethods() as $code => $data) {
-            if (isset($data['title'])) {
-                $methods[$code] = $data['title'];
-            } else {
-                $methods[$code] = $this->getMethodInstance($code)->getConfigData('title', $store);
+            if (!empty($data['active'])) {
+                $storedTitle = $this->getMethodInstance($code)->getConfigData('title', $store);
+                if (!empty($storedTitle)) {
+                    $methods[$code] = $storedTitle;
+                } elseif (!empty($data['title'])) {
+                    $methods[$code] = $data['title'];
+                }
             }
             if ($asLabelValue && $withGroups && isset($data['group'])) {
                 $groupRelations[$code] = $data['group'];
@@ -293,7 +296,9 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             foreach ($methods as $code => $title) {
                 if (isset($groups[$code])) {
                     $labelValues[$code]['label'] = $title;
-                    $labelValues[$code]['value'] = null;
+                    if (!isset($labelValues[$code]['value'])) {
+                        $labelValues[$code]['value'] = null;
+                    }
                 } elseif (isset($groupRelations[$code])) {
                     unset($labelValues[$code]);
                     $labelValues[$groupRelations[$code]]['value'][$code] = ['value' => $code, 'label' => $title];

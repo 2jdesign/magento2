@@ -68,9 +68,11 @@ class PageActionsTest extends \PHPUnit\Framework\TestCase
                         'label' => __('Delete'),
                         'confirm' => [
                             'title' => __('Delete %1', $title),
-                            'message' => __('Are you sure you want to delete a %1 record?', $title)
+                            'message' => __('Are you sure you want to delete a %1 record?', $title),
+                            '__disableTmpl' => true,
                         ],
-                    ]
+                        'post' => true,
+                    ],
                 ],
             ]
         ];
